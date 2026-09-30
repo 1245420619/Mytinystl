@@ -14,11 +14,6 @@
   * utility
 * 配置器
   * allocator
-    * allocate
-    * deallocate
-  * constructer
-    * construct
-    * destory
 * 迭代器
   * iteratr
 * 算法
