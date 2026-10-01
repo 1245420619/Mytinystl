@@ -1,7 +1,9 @@
 #ifndef AFE_ALLOCATOR_H
-#define AFE_ALLOCATOR_H
-#include"utility.h"
-#include"iterator.h"
+#define AFE_ALLOCATOR_H                        
+#include"utility.h"     //is_trivially_copy_assignable?
+                        //for move,forward
+                        //is_trivially_destructible?
+#include"iterator.h"    
 namespace afe{
 
 //declaration
@@ -20,6 +22,10 @@ public:
 
     template<class...Args>
     static void construct(T* ptr,Args&& ...value);
+
+    static void destroy(T* pointer);
+    static void destroy(T* first, T* last);
+
 };
 
 //realize
@@ -80,18 +86,18 @@ void allocator<T>::construct(T* ptr, Args&& ...args){
 //destory
 
 template <class T>
-void destroy_one(T*, true_type) {}
+void destroy_one(T*,true_type) {}
 
 template <class T>
 void destroy_one(T* pointer, false_type){
-    if (pointer != nullptr) pointer->~T();
+    if(pointer != nullptr)  pointer->~T();
 }
 
-template <class Fwditer>
-void destroy_n(Fwditer, Fwditer, true_type) {}
+template <class T>
+void destroy_n(T*,T*,true_type) {}
 
-template <class Fwditer>
-void destroy_n(Fwditer first, Fwditer last, false_type){
+template <class T>
+void destroy_n(T* first, T* last, false_type){
     while(first!=last){
         destroy(&*first);
         first++;
@@ -99,14 +105,13 @@ void destroy_n(Fwditer first, Fwditer last, false_type){
 }
 
 template <class T>
-void destroy(T* pointer){
+void allocator<T>::destroy(T* pointer){
     destroy_one(pointer, is_trivially_destructible<T>{});
 }
 
-template <class Fwditer>
-void destroy(Fwditer first, Fwditer last){
-    destroy_n(first, last
-    ,is_trivially_destructible<typename iterator_traits<Fwditer>::value_type>{});
+template <class T>
+void allocator<T>::destroy(T* first, T* last){
+    destroy_n(first,last,is_trivially_destructible<T>{});
 }
 
 }
