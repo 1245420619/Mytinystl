@@ -1,6 +1,9 @@
 #ifndef AFE_UTILITY_H
 #define AFE_UTILITY_H
-#include"type_traits.h"
+#include"type_traits.h" //is_trivially_copy_assignable?
+                        //is_trivially_destructible?
+                        //type remove_reference
+                        //is_lvalue_reference?
 namespace afe{
 
 // move
