@@ -1,9 +1,8 @@
 #ifndef AFE_UNINITIALIZED_H
 #define AFE_UNINITIALIZED_H
-#include"type_traits.h"
-#include"allocator.h"
-#include"iterator.h"
-#include"algorithm.h"
+#include"algorithm.h"   //for copy,fill_n
+#include"allocator.h"   //for construct,destory
+                        //is_trivially_copy_assignable?
 namespace afe{
 
 //copy
