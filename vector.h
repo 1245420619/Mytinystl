@@ -1,8 +1,6 @@
 #ifndef AFE_VECTOR_H_
 #define AFE_VECTOR_H_ 
-//#include<memory>
-#include"uninitialized.h"
-#include"algorithm.h"
+#include"uninitialized.h"   //for algorithm
 namespace afe{
 
 template<class T>
@@ -28,22 +26,21 @@ protected:
     
 public:
     vector():start(0),finish(0),end_of_storage(0) { }
-    explicit vector(size_t n) { fill_initialize(n,value_type() ); }
-    vector(size_t n,const T& value) { fill_initialize(n,value); }
+    explicit vector(size_t n)       { fill_initialize(n,value_type() );}
+    vector(size_t n,const T& value) { fill_initialize(n,value);}
     vector(int n, const T& value)   { fill_initialize(n,value);}
     vector(long n, const T& value)  { fill_initialize(n,value);}
-    ~vector() { 
-        deallocate();
-    }
+    ~vector()                       { deallocate();}
 
-    iterator begin(){return start;}
-    iterator end(){return finish;}
-    size_t size(){return finish-start;}
-    size_t capacity(){return end_of_storage-start;}
-    bool empty(){return start==finish;}
-    reference operator[](size_t n){ return *(start+n);}
-    reference front() { return *start; }
-    reference back() { return *(finish-1) ;}
+    iterator begin()                {return start;}
+    iterator end()                  {return finish;}
+    size_t size()                   {return finish-start;}
+    size_t capacity()               {return end_of_storage-start;}
+    bool empty()                    {return start==finish;}
+
+    reference operator[](size_t n)  { return *(start+n);}
+    reference front()               { return *start; }
+    reference back()                { return *(finish-1) ;}
 
 
     void push_back(const T& x);
@@ -53,10 +50,10 @@ public:
     void pop_back();
     iterator erase(iterator position);
     iterator erase(iterator first,iterator last);
-    void clear() { erase(start,finish); }
+    void clear()                    { erase(start,finish); }
 
     void resize(size_t new_size,const T& x);
-    void resize(size_t new_size) { resize(new_size,value_type()); }
+    void resize(size_t new_size)    { resize(new_size,value_type()); }
     
 };
 
