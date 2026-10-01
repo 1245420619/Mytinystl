@@ -5,7 +5,7 @@ namespace afe{
 template <class...>
 using void_t = void;
 
-//integral_constant
+//type true_type false_type
 
 template <class T, T V>
 struct integral_constant {
@@ -19,15 +19,7 @@ struct integral_constant {
 using true_type  = integral_constant<bool, true>;
 using false_type = integral_constant<bool, false>;
 
-template <class _Tp, class _Up>
-struct is_trivially_assignable
-    : public integral_constant<bool, __is_trivially_assignable(_Tp, _Up)> {};
-
-template <class _Tp>
-struct is_trivially_destructible
-    : public integral_constant<bool, __has_trivial_destructor(_Tp)> {};
-
-// type_traits remove_reference
+//type remove_reference
 
 template<class T>
 struct remove_reference{
@@ -44,13 +36,16 @@ struct remove_reference<T&&>{
     typedef T type;
 };
 
-//is_lvalue_reference
+//assignable? destructible?
 
-template <class T>
-struct is_lvalue_reference : public false_type {};
+template <class _Tp, class _Up>
+struct is_trivially_assignable
+    : public integral_constant<bool, __is_trivially_assignable(_Tp, _Up)> {};
 
-template <class T>
-struct is_lvalue_reference<T&> : public true_type {};
+template <class _Tp>
+struct is_trivially_destructible
+    : public integral_constant<bool, __has_trivial_destructor(_Tp)> {};
+
 
 //add_lvalue_reference
 
@@ -67,13 +62,22 @@ struct __add_lvalue_reference_helper<T, void_t<T&> > {
 template <class T>
 struct add_lvalue_reference : __add_lvalue_reference_helper<T> {};
 
-//is_trivially_copy_assignable
+//copy_assignable?
 
 template<class T>
 struct is_trivially_copy_assignable: is_trivially_assignable<
           typename add_lvalue_reference<T>::type,
           typename add_lvalue_reference<const T>::type
       > {};
+
+//is_lvalue_reference?
+
+template <class T>
+struct is_lvalue_reference : public false_type {};
+
+template <class T>
+struct is_lvalue_reference<T&> : public true_type {};
+
 
 }
 #endif
