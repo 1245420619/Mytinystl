@@ -3,6 +3,7 @@
 #include"algorithm.h"   //for copy,fill_n
 #include"allocator.h"   //for construct,destory
                         //is_trivially_copy_assignable?
+#include"iterator.h"    //type value_type
 namespace afe{
 
 //copy
