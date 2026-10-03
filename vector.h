@@ -1,6 +1,7 @@
 #ifndef AFE_VECTOR_H_
-#define AFE_VECTOR_H_ 
-#include"uninitialized.h"   //for algorithm
+#define AFE_VECTOR_H_
+#include"uninitialized.h"   //for algorithm 
+#include"alloc.h"   
 namespace afe{
 
 template<class T>
@@ -10,11 +11,11 @@ class vector{
 
 public:
     typedef T                   value_type;
-    typedef value_type *        iterator;
-    typedef value_type &        reference;
-    typedef afe::allocator<T>   allocator_type;
-
+    typedef T*                  iterator;
+    typedef T&                  reference;
+    
 private:
+    typedef simple_alloc<T> data_allocator;
     iterator start;
     iterator finish;
     iterator end_of_storage;
@@ -34,6 +35,7 @@ public:
 
     iterator begin()                {return start;}
     iterator end()                  {return finish;}
+    
     size_t size()                   {return finish-start;}
     size_t capacity()               {return end_of_storage-start;}
     bool empty()                    {return start==finish;}
@@ -64,7 +66,7 @@ public:
 template<class T>
 void vector<T>::vallocate(iterator position,size_t n,const T& x,size_t add_size){
     size_t new_size=size()+add_size;
-    iterator new_start = allocator_type::allocate(new_size);
+    iterator new_start = data_allocator::allocate(new_size);
     iterator new_finish = new_start;
     try{
         new_finish=uninitialized_copy(start,position,new_start);
@@ -73,7 +75,7 @@ void vector<T>::vallocate(iterator position,size_t n,const T& x,size_t add_size)
     }catch(...){
         for(iterator p = new_start ; p != new_finish ; p++){
             p->~T();
-        allocator_type::deallocate(new_start,new_size);
+        data_allocator::deallocate(new_start,new_size);
         throw;
         }
     }
@@ -89,12 +91,17 @@ void vector<T>::vallocate(iterator position,size_t n,const T& x,size_t add_size)
 
 template<class T>
 void vector<T>::deallocate(){
-        if(start){
-            size_t n=end_of_storage-start;
-            if(n!=0){
-                allocator_type::deallocate(start,n);
-            }
-        }
+    if(start)
+        data_allocator::deallocate(start,end_of_storage-start);
+}
+
+
+template<class T>
+void vector<T>::fill_initialize(size_t n,const T& x){
+    start=data_allocator::allocate(n);
+    uninitialized_fill_n(start,n,x);
+    finish=start+n;
+    end_of_storage=finish;
 }
 
 //insert
@@ -127,18 +134,6 @@ void vector<T>::insert(iterator position,size_t n,const T& x){
         }
         vallocate(position,n,x,need_capacity);
     }
-}
-
-template<class T>
-void vector<T>::fill_initialize(size_t n,const T& x){
-    if(n==0){
-        start=0;
-    }else{
-        start=allocator_type::allocate(n);
-        uninitialized_fill_n(start,n,x);
-    }
-    finish=start+n;
-    end_of_storage=finish;
 }
 
 //delete
