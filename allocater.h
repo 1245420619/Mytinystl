@@ -3,8 +3,9 @@
 #include"utility.h"     //is_trivially_copy_assignable?
                         //for move,forward
                         //is_trivially_destructible?
-#include"iterator.h"    
 namespace afe{
+
+typedef __SIZE_TYPE__    size_t;
 
 //declaration
 
