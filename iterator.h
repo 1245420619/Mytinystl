@@ -3,7 +3,6 @@
 namespace afe{
 
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
-typedef __SIZE_TYPE__    size_t;
 
 struct input_iterator_tag {};
 struct output_iterator_tag {};
