@@ -21,4 +21,7 @@
   * uninitialized 
 * 容器
   * vector
+  * deque
+* 配接器
+  * stack
 
