@@ -261,7 +261,7 @@ void deque<T,Bufsize>::clear(){
 
 template<class T,size_t Bufsize>
 void deque<T,Bufsize>::pop_back(){
-    if(finish.cur!=finish.start){
+    if(finish.cur!=finish.first){
         --finish.cur;
         destroy(finish.cur);    
     }else
