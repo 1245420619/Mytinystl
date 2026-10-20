@@ -24,4 +24,5 @@
   * deque
 * 配接器
   * stack
+  * queue
 
