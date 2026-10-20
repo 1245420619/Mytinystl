@@ -14,6 +14,16 @@ Outiter copy(Intiter first, Intiter last, Outiter result){
   return result;
 }
 
+template <class Intiter, class Outiter>
+Outiter copy_backward(Intiter first, Intiter last, Outiter result){
+  while(first!=last){
+    --last;
+    --result;
+    *result=*last;
+  }
+  return result;
+}
+
 //fill
 
 template <class Outiter, class Size, class T>
@@ -25,6 +35,13 @@ Outiter fill_n(Outiter first, Size n, const T& value)
     first++;
   }
   return first;
+}
+
+//max
+
+template<class T>
+const T& max(const T& a, const T& b) {
+    return a > b ? a : b;
 }
 
 }
