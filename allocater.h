@@ -16,17 +16,6 @@ public:
     static T* allocate(size_t n);
     static void deallocate(T* ptr);
     static void deallocate(T* ptr, size_t n);
-
-    static void construct(T* ptr);
-    static void construct(T* ptr,const T& value);
-    static void construct(T* ptr,T&& value);
-
-    template<class...Args>
-    static void construct(T* ptr,Args&& ...value);
-
-    static void destroy(T* pointer);
-    static void destroy(T* first, T* last);
-
 };
 
 //realize
@@ -64,24 +53,23 @@ void allocator<T>::deallocate(T* ptr, size_t n){
 //construct
 
 template<class T>
-void allocator<T>::construct(T* ptr){
+void construct(T* ptr){
     ::new ((void*)ptr) T();
 }
 
 template<class T>
-void allocator<T>::construct(T* ptr,const T& value){
+void construct(T* ptr,const T& value){
     ::new ((void*)ptr) T(value);
 }
 
 template<class T>
-void allocator<T>::construct(T* ptr,T&& value){
+void construct(T* ptr,T&& value){
     ::new ((void*)ptr) T(move(value));
 }
 
-template <class T>
-template <class ...Args>
-void allocator<T>::construct(T* ptr, Args&& ...args){
-    construct(ptr, forward<Args>(args)...);
+template <class T, class... Args>
+void construct(T* ptr, Args&& ...args){
+    new (ptr) T(forward<Args>(args)...);
 }
 
 //destory
@@ -106,12 +94,12 @@ void destroy_n(T* first, T* last, false_type){
 }
 
 template <class T>
-void allocator<T>::destroy(T* pointer){
+void destroy(T* pointer){
     destroy_one(pointer, is_trivially_destructible<T>{});
 }
 
 template <class T>
-void allocator<T>::destroy(T* first, T* last){
+void destroy(T* first, T* last){
     destroy_n(first,last,is_trivially_destructible<T>{});
 }
 
