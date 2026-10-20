@@ -8,9 +8,10 @@ namespace afe{
 template<class T,class Container=deque<T> >
 class stack{
 public:
-    typedef typename Container::value_type  value_type;
-    typedef typename Container::size_t      size_t;
-    typedef typename Container::reference   reference;
+    typedef typename Container::size_type           size_type;
+    typedef typename Container::value_type          value_type;
+    typedef typename Container::reference           reference;
+    typedef typename Container::const_reference     const_reference;
 
 protected:
     Container c;
@@ -23,9 +24,9 @@ public:
     void pop()              { c.pop_back(); }
 
     friend bool operator==(const stack& x,const stack& y)
-        return x.c==y.c;
-    friend bool opertor<(const stack& x,const stack& y)
-        return x.c<y.c;
+        { return x.c==y.c; }
+    friend bool operator<(const stack& x,const stack& y)
+        { return x.c<y.c; }
 
 };
 }
