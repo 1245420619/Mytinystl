@@ -14,8 +14,8 @@ public:
     typedef T*                  iterator;
     typedef T&                  reference;
     
-private:
-    typedef simple_alloc<T> data_allocator;
+protected:
+    typedef simple_alloc<T>     data_allocator;
     iterator start;
     iterator finish;
     iterator end_of_storage;
