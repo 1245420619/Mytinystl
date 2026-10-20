@@ -61,12 +61,16 @@ struct deque_iterator{
 template<class T,size_t Bufsize=0 >
 class deque{
 public:
+    typedef size_t              size_type;
     typedef T                   value_type;
     typedef T*                  pointer;
     typedef T&                  reference;
+    typedef const T&            const_reference;
     typedef ptrdiff_t           difference_type;
     typedef pointer*            map_pointer;
-    typedef deque_iterator<T,T*,T&,Bufsize> iterator;
+
+    typedef deque_iterator<T,T*,T&,Bufsize>             iterator;
+    typedef deque_iterator<T,const T*,const T&,Bufsize> const_iterator;
 
     typedef simple_alloc<value_type>        data_allocator;
     typedef simple_alloc<pointer>           map_allocator;
@@ -83,6 +87,9 @@ protected:
     void fill_initialize(size_t n,const T& x);
 
 public:
+    deque() : start(), finish(), map(0), map_size(0) { 
+        create_map_and_nodes(0); 
+    }
     deque(size_t n,const T& x):start(),finish(),map(0),map_size(0){ 
         fill_initialize(n,x); }
     ~deque(){
@@ -99,11 +106,17 @@ public:
     void reserve_map_at_front(size_t add_nodes = 1);
     void reallocate_map(size_t add_nodes,bool isfront);
 
-    iterator begin()    { return start; }
-    iterator end()      { return finish; }
+    iterator begin()                { return start; }
+    const_iterator begin() const    { return start; }
+    iterator end()                  { return finish; }
+    const_iterator end() const      { return finish; }
     reference operator[](size_t n)  { return start[difference_type(n)]; }
-    reference front()   { return *start; }
+    const_reference operator[](size_t n) const
+        { return start[difference_type(n)]; }
+    reference front()               { return *start; }
+    const_reference front() const   { return *start; }
     reference back();
+    const_reference back() const;
 
     size_t size() const { return finish-start; }
     size_t max_size() const { return size_t(-1); }
@@ -121,6 +134,9 @@ public:
     iterator erase(iterator first,iterator last);
     iterator insert(iterator position,const T& x);
     iterator insert_aux(iterator position,const T& x);
+
+    bool operator==(const deque& x) const;
+    bool operator<(const deque& x) const;
 };
 
 
@@ -129,13 +145,6 @@ public:
 
 //deque_iterator
 
-template<class T,size_t Bufsize>
-typename deque<T,Bufsize>::reference 
-deque<T,Bufsize>::back(){
-    iterator tmp=finish;
-    --tmp;
-    return *tmp;
-}
 
 template<class T,class Ptr,class Ref,size_t Bufsize >
 inline size_t deque_iterator<T,Ptr,Ref,Bufsize>::buffer_size(){
@@ -344,6 +353,22 @@ void deque<T,Bufsize>::push_front_aux(const T& x){
 }
 
 template<class T,size_t Bufsize>
+typename deque<T,Bufsize>::reference 
+deque<T,Bufsize>::back(){
+    iterator tmp = finish;
+    --tmp;
+    return *tmp;
+}
+
+template<class T,size_t Bufsize>
+typename deque<T,Bufsize>::const_reference 
+deque<T,Bufsize>::back() const {
+    const_iterator tmp = finish;
+    --tmp;
+    return *tmp;
+}
+
+template<class T,size_t Bufsize>
 void deque<T,Bufsize>::reserve_map_at_back(size_t add_nodes){
     if(add_nodes>map_size-(finish.node-map+1))
         reallocate_map(add_nodes,false);
@@ -518,6 +543,29 @@ typename deque_iterator<T,Ptr,Ref,Bufsize>::self
 deque_iterator<T,Ptr,Ref,Bufsize>::operator-(difference_type n) const {
     self temp=*this;
     return temp-=n;
+}
+
+template<class T, size_t Bufsize>
+bool deque<T, Bufsize>::operator==(const deque& x) const {
+    if (size() != x.size()) {
+        return false;
+    }
+    for (size_t i = 0; i < size(); ++i) {
+        if ((*this)[i] != x[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<class T, size_t Bufsize>
+bool deque<T, Bufsize>::operator<(const deque& x) const {
+    size_t min_size = size() < x.size() ? size() : x.size();
+    for (size_t i = 0; i < min_size; ++i) {
+        if ((*this)[i] < x[i]) return true;
+        if (x[i] < (*this)[i]) return false;
+    }
+    return size() < x.size();
 }
 
 //non-member function
