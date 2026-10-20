@@ -15,7 +15,7 @@
 * 配置器
   * allocator
 * 迭代器
-  * iteratr
+  * iterator
 * 算法
   * alogorithm
   * uninitialized 
