@@ -10,9 +10,12 @@ class vector{
 //declaration
 
 public:
+    typedef size_t              size_type;
     typedef T                   value_type;
     typedef T*                  iterator;
     typedef T&                  reference;
+    typedef const T*            const_iterator;   
+    typedef const T&            const_reference;
     
 protected:
     typedef simple_alloc<T>     data_allocator;
@@ -33,16 +36,21 @@ public:
     vector(long n, const T& value)  { fill_initialize(n,value);}
     ~vector()                       { deallocate();}
 
-    iterator begin()                {return start;}
-    iterator end()                  {return finish;}
+    iterator begin()                { return start; }
+    const_iterator begin() const    { return start; }
+    iterator end()                  { return finish; }
+    const_iterator end() const      { return finish; }
     
-    size_t size()                   {return finish-start;}
-    size_t capacity()               {return end_of_storage-start;}
-    bool empty()                    {return start==finish;}
+    size_t size()                   { return finish-start; }
+    size_t capacity()               { return end_of_storage-start; }
+    bool empty()                    { return start==finish; }
 
-    reference operator[](size_t n)  { return *(start+n);}
+    reference operator[](size_t n)              { return *(start+n); }
+    const_reference operator[](size_t n) const  { return *(start+n); }
     reference front()               { return *start; }
-    reference back()                { return *(finish-1) ;}
+    const_reference front() const   { return *start; }
+    reference back()                { return *(finish-1); }
+    const_reference back() const    { return *(finish-1); }
 
 
     void push_back(const T& x);
