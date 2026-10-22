@@ -61,19 +61,21 @@ struct deque_iterator{
 template<class T,size_t Bufsize=0 >
 class deque{
 public:
-    typedef size_t              size_type;
-    typedef T                   value_type;
-    typedef T*                  pointer;
-    typedef T&                  reference;
-    typedef const T&            const_reference;
-    typedef ptrdiff_t           difference_type;
-    typedef pointer*            map_pointer;
-
     typedef deque_iterator<T,T*,T&,Bufsize>             iterator;
     typedef deque_iterator<T,const T*,const T&,Bufsize> const_iterator;
 
-    typedef simple_alloc<value_type>        data_allocator;
-    typedef simple_alloc<pointer>           map_allocator;
+    typedef simple_alloc<T>        data_allocator;
+    typedef simple_alloc<T*>           map_allocator;
+
+    typedef typename data_allocator::value_type      value_type;
+    typedef typename data_allocator::pointer         pointer;
+    typedef typename data_allocator::const_pointer   const_pointer;
+    typedef typename data_allocator::reference       reference;
+    typedef typename data_allocator::const_reference const_reference;
+    typedef typename data_allocator::size_type       size_type;
+    typedef typename data_allocator::difference_type difference_type;
+
+    typedef pointer*            map_pointer;
 
 protected:
     iterator start;
