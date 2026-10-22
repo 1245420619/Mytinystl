@@ -58,14 +58,37 @@ void push_heap_aux2(RandomIter first,Distance holeindex,Distance topindex,T valu
     *(first+holeindex)=value;
 }
 
-template<class RandomIter,class Distance,class T>
-void push_heap_aux(RandomIter first,RandomIter last,Distance*,T*){
-    push_heap_aux2(first,Distance((last-first)-1),Distance(0),T(*(last-1)));
+template <class RandomIter, class Distance, class T, class Compared>
+void push_heap_aux2(RandomIter first,Distance holeindex,Distance topindex,T value,Compared comp){
+    Distance parent=(holeindex-1)/2;
+    while(holeindex>topindex&&comp(*(first + parent),value)){
+        *(first+holeindex)=*(first+parent);
+        holeindex=parent;
+        parent=(holeindex-1)/2;
+    }
+    *(first+holeindex)=value;
 }
+
+
+template<class RandomIter,class Distance>
+void push_heap_aux(RandomIter first,RandomIter last,Distance*){
+    push_heap_aux2(first,Distance((last-first)-1),Distance(0),*(last-1));
+}
+
+template <class RandomIter, class Compared,class Distance>
+void push_heap_aux(RandomIter first,RandomIter last,Distance*,Compared comp){
+    push_heap_aux2(first,Distance((last-first)-1),Distance(0),*(last-1), comp);
+}
+
 
 template<class RandomIter>
 void push_heap(RandomIter first,RandomIter last){
-    push_heap_aux(first,last,difference_type(first),value_type(first));
+    push_heap_aux(first,last,difference_type(first));
+}
+
+template <class RandomIter, class Compared>
+void push_heap(RandomIter first,RandomIter last,Compared comp){
+    push_heap_aux(first,last,difference_type(first),comp);
 }
 
 //adjust_heap
@@ -88,22 +111,52 @@ void adjust_heap(RandomIter first,Distance holeindex,Distance len,T value){
     push_heap_aux2(first,holeindex,topindex,value);
 }
 
+template <class RandomIter, class T, class Distance, class Compared>
+void adjust_heap(RandomIter first,Distance holeindex,Distance len,T value,Compared comp){
+    Distance topindex =holeindex;
+    Distance rchild=2*holeindex+2;
+    while(rchild<len){
+        if (comp(*(first+rchild),*(first+rchild-1)))
+        --rchild; 
+        *(first+holeindex)=*(first+rchild);
+        holeindex =rchild;
+        rchild=2*(rchild + 1);
+    }
+    if(rchild==len)
+    {
+        *(first+holeindex)=*(first+(rchild -1));
+        holeindex=rchild - 1;
+    }
+    push_heap_aux2(first,holeindex,topindex,value,comp);
+}
+
 //pop_heap
 
 template<class RandomIter,class Distance,class T>
-void pop_heap_aux2(RandomIter first,RandomIter last,RandomIter result,T value,Distance*){
+void pop_heap_aux(RandomIter first,RandomIter last,RandomIter result,T value,Distance*){
     *result=*first;
     adjust_heap(first,Distance(0),Distance(last-first),value);
 }
 
-template<class RandomIter,class T>
-void pop_heap_aux(RandomIter first,RandomIter last,T*){
-    pop_heap_aux2(first,last-1,last-1,T(*(last-1)),difference_type(first));
+template <class RandomIter, class T, class Distance, class Compared>
+void pop_heap_aux(RandomIter first,RandomIter last,RandomIter result,T value,Distance*,Compared comp){
+    *result = *first;
+    adjust_heap(first,Distance(0),Distance(last-first),value,comp);
 }
+
 
 template<class RandomIter>
 void pop_heap(RandomIter first,RandomIter last){
-    pop_heap_aux(first,last,value_type(first));
+    if(last-first>=2){
+        pop_heap_aux(first,last-1,last-1,*(last-1),difference_type(first));
+    }
+}
+
+template <class RandomIter, class Compared>
+void pop_heap(RandomIter first, RandomIter last, Compared comp){
+    if(last-first>=2){
+        pop_heap_aux(first,last-1,last-1,*(last-1),difference_type(first),comp);
+    }
 }
 
 //sort_heap
@@ -115,21 +168,40 @@ void sort_heap(RandomIter first,RandomIter last){
     }
 }
 
-template<class RandomIter,class Distance,class T>
-void make_heap_aux(RandomIter first,RandomIter last,Distance*,T*){
+//maek_heap
+
+template<class RandomIter,class Distance>
+void make_heap_aux(RandomIter first,RandomIter last,Distance*){
     if(last-first<2) return;
     Distance len=last-first;
     Distance holeindex=(len-2)/2;
-    adjust_heap(first,holeindex,len,*(first+holeindex));
-    while(holeindex!=0){
+    while(true){
+        adjust_heap(first,holeindex,len,*(first + holeindex));
+        if(holeindex==0) return;
         holeindex--;
-        adjust_heap(first,holeindex,len,*(first+holeindex));
+    }
+}
+
+template <class RandomIter, class Distance, class Compared>
+void make_heap_aux(RandomIter first,RandomIter last,Distance*,Compared comp) {
+    if(last-first<2) return;
+    Distance len=last-first;
+    Distance holeindex=(len-2)/2;
+    while (true) {
+        adjust_heap(first,holeindex,len,*(first + holeindex),comp);
+        if(holeindex==0) return;
+        holeindex--;
     }
 }
 
 template<class RandomIter>
 void make_heap(RandomIter first,RandomIter last){
-    make_heap_aux(first,last,value_type(first),difference_type(first));
+    make_heap_aux(first,last,difference_type(first));
+}
+
+template <class RandomIter, class Compared>
+void make_heap(RandomIter first, RandomIter last, Compared comp) {
+    make_heap_aux(first,last,difference_type(first), comp);
 }
 
 }
