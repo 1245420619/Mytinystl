@@ -49,12 +49,23 @@ struct iterator_traits<const T*> {
 };
 
 template <class Iterator>
-inline typename iterator_traits<Iterator>::iterator_category
-iterator_category(const Iterator&) {
-    typedef typename iterator_traits<Iterator>::iterator_category category;
-    return category();
+typename iterator_traits<Iterator>::iterator_category
+iterator_category(const Iterator&){
+    typedef typename iterator_traits<Iterator>::iterator_category Category;
+    return Category();
+}
+
+template <class Iterator>
+typename iterator_traits<Iterator>::difference_type*
+difference_type(const Iterator&){
+    return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+}
+
+template <class Iterator>
+typename iterator_traits<Iterator>::value_type*
+value_type(const Iterator&){
+    return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
 }
 
 }
-
 #endif
