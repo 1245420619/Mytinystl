@@ -1,7 +1,7 @@
 #ifndef AFE_VECTOR_H_
 #define AFE_VECTOR_H_
 #include"uninitialized.h"   //for algorithm 
-#include"alloc.h"   
+#include"alloc.h"
 namespace afe{
 
 template<class T>
@@ -10,15 +10,20 @@ class vector{
 //declaration
 
 public:
-    typedef size_t              size_type;
-    typedef T                   value_type;
-    typedef T*                  iterator;
-    typedef T&                  reference;
-    typedef const T*            const_iterator;   
-    typedef const T&            const_reference;
-    
-protected:
     typedef simple_alloc<T>     data_allocator;
+
+    typedef typename data_allocator::value_type      value_type;
+    typedef typename data_allocator::pointer         pointer;
+    typedef typename data_allocator::const_pointer   const_pointer;
+    typedef typename data_allocator::reference       reference;
+    typedef typename data_allocator::const_reference const_reference;
+    typedef typename data_allocator::size_type       size_type;
+    typedef typename data_allocator::difference_type difference_type;
+    
+    typedef value_type*                              iterator;
+    typedef const value_type*                        const_iterator;
+
+protected:
     iterator start;
     iterator finish;
     iterator end_of_storage;
@@ -35,6 +40,9 @@ public:
     vector(int n, const T& value)   { fill_initialize(n,value);}
     vector(long n, const T& value)  { fill_initialize(n,value);}
     ~vector()                       { deallocate();}
+
+    template <class Inputiter>
+    vector(Inputiter first, Inputiter last);
 
     iterator begin()                { return start; }
     const_iterator begin() const    { return start; }
@@ -68,6 +76,25 @@ public:
 };
 
 //realize
+
+template <class T>
+template <class Inputiter>
+vector<T>::vector(Inputiter first, Inputiter last) {
+    difference_type n = last-first;
+    start = data_allocator::allocate(n);
+    finish = start;
+    end_of_storage = start + n;
+    try {
+        for (; first != last; ++first, ++finish) {
+            construct(finish, *first);
+        }
+    } catch (...) {
+        destroy(start, finish);
+        data_allocator::deallocate(start, n);
+        start = finish = end_of_storage = nullptr;
+        throw;
+    }
+}
 
 //allocate
 
