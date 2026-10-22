@@ -8,6 +8,15 @@ namespace afe{
 template<class T>
 class simple_alloc{
 public:
+    typedef T            value_type;
+    typedef T*           pointer;
+    typedef const T*     const_pointer;
+    typedef T&           reference;
+    typedef const T&     const_reference;
+    typedef size_t       size_type;
+    typedef ptrdiff_t    difference_type;
+    
+public:
     static T* allocate(void);
     static T* allocate(size_t n);
 
