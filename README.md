@@ -14,15 +14,23 @@
   * utility
 * 配置器
   * allocator
+  * alloc
 * 迭代器
   * iterator
 * 算法
   * alogorithm
-  * uninitialized 
+  * uninitialized
+  * funtional
 * 容器
   * vector
   * deque
 * 配接器
   * stack
   * queue
+* 测试
+  *vectortest
+  *dequetest
+  *stacktest
+  *queuetest
+  *heaptest 
 
