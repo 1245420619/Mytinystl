@@ -49,9 +49,9 @@ public:
     iterator end()                  { return finish; }
     const_iterator end() const      { return finish; }
     
-    size_t size()                   { return finish-start; }
-    size_t capacity()               { return end_of_storage-start; }
-    bool empty()                    { return start==finish; }
+    size_t size() const             { return finish-start; }
+    size_t capacity() const         { return end_of_storage-start; }
+    bool empty() const              { return start==finish; }
 
     reference operator[](size_t n)              { return *(start+n); }
     const_reference operator[](size_t n) const  { return *(start+n); }
